@@ -1,15 +1,5 @@
-# Flutter Clock
+# Neon Rainbow Clock For Flutter
 
-Welcome to Flutter Clock!
+A submission for the Flutter Clock Challenge
 
-See [flutter.dev/clock](https://flutter.dev/clock) for how to get started, submission requirements, contest rules, and FAQs.
-
-See a [live demo](https://maryx.github.io/flutter_clock) with Flutter for Web!
-
-Example [Analog Clock](analog_clock)
-
-<img src='analog_clock/analog.gif' width='350'>
-
-Example [Digital Clock](digital_clock)
-
-<img src='digital_clock/digital.gif' width='350'>
+Digital clock face that replicates a neon sign. Colors changes across the rainbow on the minute.

@@ -1,15 +1,14 @@
-// Copyright 2019 The Chromium Authors. All rights reserved.
+// Copyright 2020 Ben Brosius. Adapted from code by the Chromium team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'dart:async';
 
-import 'package:digital_clock/weather.dart';
+import 'package:neon_rainbow_clock/weather.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_clock_helper/model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'detail_text_widget.dart';
 
@@ -30,7 +29,7 @@ class _NeonDigitalClockState extends State<NeonDigitalClock> {
   int _colorIndex = -1;
   Color _baseColor;
   Color _glowColor;
-  final Duration _colorAnimationDuration = Duration(seconds: 59);
+  final Duration _colorAnimationDuration = Duration(seconds: 30);
 
   List<Color> _rainbowColors = [
     Colors.redAccent,
@@ -124,32 +123,32 @@ class _NeonDigitalClockState extends State<NeonDigitalClock> {
         (ampm == "AM") ? CrossAxisAlignment.start : CrossAxisAlignment.end;
 
     final date = DateFormat('EEE, MMM d').format(_dateTime);
-    final neonTextStyle = GoogleFonts.kalam(
-      textStyle: TextStyle(
-          fontSize: fontSize,
-          fontWeight: FontWeight.w300,
-          color: _baseColor,
-          shadows: [
-            BoxShadow(
-                color: _glowColor.withAlpha(150),
-                offset: Offset(4.0, 4.0),
-                blurRadius: 15.0),
-            BoxShadow(
-              color: _glowColor.withAlpha(200),
-              offset: Offset(2.0, 2.0),
-              blurRadius: 10.0,
-            ),
-            BoxShadow(
-              color: _glowColor.withAlpha(150),
-              blurRadius: 15.0,
-              offset: Offset(-4.0, -4.0),
-            ),
-            BoxShadow(
-              color: _glowColor.withAlpha(200),
-              offset: Offset(-2.0, -2.0),
-              blurRadius: 10.0,
-            ),
-          ]),
+    final neonTextStyle = TextStyle(
+      fontFamily: 'kalam',
+      fontSize: fontSize,
+      fontWeight: FontWeight.w300,
+      color: _baseColor,
+      shadows: [
+        BoxShadow(
+            color: _glowColor.withAlpha(150),
+            offset: Offset(4.0, 4.0),
+            blurRadius: 15.0),
+        BoxShadow(
+          color: _glowColor.withAlpha(200),
+          offset: Offset(2.0, 2.0),
+          blurRadius: 10.0,
+        ),
+        BoxShadow(
+          color: _glowColor.withAlpha(150),
+          blurRadius: 15.0,
+          offset: Offset(-4.0, -4.0),
+        ),
+        BoxShadow(
+          color: _glowColor.withAlpha(200),
+          offset: Offset(-2.0, -2.0),
+          blurRadius: 10.0,
+        ),
+      ],
     );
 
     return Container(
@@ -158,7 +157,6 @@ class _NeonDigitalClockState extends State<NeonDigitalClock> {
           children: <Widget>[
             AnimatedDefaultTextStyle(
               duration: _colorAnimationDuration,
-              curve: Curves.easeIn,
               style: neonTextStyle,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

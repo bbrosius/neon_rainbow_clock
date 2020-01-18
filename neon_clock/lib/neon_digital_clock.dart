@@ -13,9 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'detail_text_widget.dart';
 
-/// A basic digital clock.
-///
-/// You can do better than this!
+/// A neon digital clock that animates through the colors of the rainbow.
 class NeonDigitalClock extends StatefulWidget {
   const NeonDigitalClock(this.model);
 
@@ -32,7 +30,7 @@ class _NeonDigitalClockState extends State<NeonDigitalClock> {
   int _colorIndex = -1;
   Color _baseColor;
   Color _glowColor;
-  final Duration _colorAnimationDuration = Duration(seconds: 10);
+  final Duration _colorAnimationDuration = Duration(seconds: 59);
 
   List<Color> _rainbowColors = [
     Colors.redAccent,

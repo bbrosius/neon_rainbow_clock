@@ -10,8 +10,6 @@ import 'package:flutter_clock_helper/model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'detail_text_widget.dart';
-
 /// A neon digital clock that animates through the colors of the rainbow.
 class NeonDigitalClock extends StatefulWidget {
   const NeonDigitalClock(this.model);
@@ -29,7 +27,7 @@ class _NeonDigitalClockState extends State<NeonDigitalClock> {
   int _colorIndex = -1;
   Color _baseColor;
   Color _glowColor;
-  final Duration _colorAnimationDuration = Duration(seconds: 30);
+  final Duration _colorAnimationDuration = Duration(seconds: 55);
 
   List<Color> _rainbowColors = [
     Colors.redAccent,
@@ -54,13 +52,18 @@ class _NeonDigitalClockState extends State<NeonDigitalClock> {
   @override
   void initState() {
     super.initState();
-    widget.model.addListener(_updateModel);
 
     _baseColor = _rainbowColors[0];
     _glowColor = _rainbowGlow[0];
+
+    _updateTextStyles();
+    widget.model.addListener(_updateModel);
+
     _updateTime();
     _updateModel();
   }
+
+  void _updateTextStyles() {}
 
   @override
   void didUpdateWidget(NeonDigitalClock oldWidget) {
@@ -90,23 +93,27 @@ class _NeonDigitalClockState extends State<NeonDigitalClock> {
     setState(() {
       _dateTime = DateTime.now();
 
-      _colorIndex++;
-      if (_colorIndex > 6) {
-        _colorIndex = 0;
-      }
-
-      _baseColor = _rainbowColors[_colorIndex];
-      _glowColor = _rainbowGlow[_colorIndex];
-
       // Update once per minute. If you want to update every second, use the
       // following code.
       _timer = Timer(
         Duration(minutes: 1) -
             Duration(seconds: _dateTime.second) -
             Duration(milliseconds: _dateTime.millisecond),
-        _updateTime,
+        _timerElapsed,
       );
     });
+  }
+
+  void _timerElapsed() {
+    _colorIndex++;
+    if (_colorIndex > 6) {
+      _colorIndex = 0;
+    }
+
+    _baseColor = _rainbowColors[_colorIndex];
+    _glowColor = _rainbowGlow[_colorIndex];
+
+    _updateTime();
   }
 
   @override
@@ -116,16 +123,16 @@ class _NeonDigitalClockState extends State<NeonDigitalClock> {
     final minute = DateFormat('mm').format(_dateTime);
     final ampm =
         widget.model.is24HourFormat ? "" : DateFormat('a').format(_dateTime);
-    final fontSize = MediaQuery.of(context).size.width / 4;
-    final detailFontSize = MediaQuery.of(context).size.width / 12;
-    final double ampmPadding = fontSize / 3.0;
+
+    final double ampmPadding = 50;
     final CrossAxisAlignment ampmAlignment =
         (ampm == "AM") ? CrossAxisAlignment.start : CrossAxisAlignment.end;
 
     final date = DateFormat('EEE, MMM d').format(_dateTime);
-    final neonTextStyle = TextStyle(
+
+    TextStyle neonClockTextStyle = TextStyle(
       fontFamily: 'kalam',
-      fontSize: fontSize,
+      fontSize: 148.0,
       fontWeight: FontWeight.w300,
       color: _baseColor,
       shadows: [
@@ -151,66 +158,77 @@ class _NeonDigitalClockState extends State<NeonDigitalClock> {
       ],
     );
 
+    TextStyle neonTextStyle = neonClockTextStyle.copyWith(fontSize: 48.0);
+
     return Container(
         color: Colors.black,
-        child: Column(
-          children: <Widget>[
-            AnimatedDefaultTextStyle(
-              duration: _colorAnimationDuration,
-              style: neonTextStyle,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: ampmAlignment,
-                children: <Widget>[
-                  Text(hour),
-                  Text(":"),
-                  Text(minute),
-                  Padding(
-                    padding:
-                        EdgeInsets.only(top: ampmPadding, bottom: ampmPadding),
-                    child: DetailTextWidget(
-                        defaultStyle: neonTextStyle,
-                        detailFontSize: detailFontSize,
-                        colorAnimationDuration: _colorAnimationDuration,
-                        text: ampm),
-                  ),
-                ],
+        child: FittedBox(
+          fit: BoxFit.fill,
+          child: Column(
+            children: <Widget>[
+              AnimatedDefaultTextStyle(
+                duration: _colorAnimationDuration,
+                style: neonClockTextStyle,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: ampmAlignment,
+                  children: <Widget>[
+                    Text(hour),
+                    Text(":"),
+                    Text(minute),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: ampmPadding, bottom: ampmPadding),
+                      child: AnimatedDefaultTextStyle(
+                        duration: _colorAnimationDuration,
+                        style: neonTextStyle,
+                        child: Text(ampm),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Row(
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                child: AnimatedDefaultTextStyle(
+                  duration: _colorAnimationDuration,
+                  style: neonTextStyle,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      Image(
-                        image: _weatherImage,
-                        semanticLabel:
-                            enumToString(widget.model.weatherCondition),
-                        width: 64,
+                      Row(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Image(
+                              image: _weatherImage,
+                              semanticLabel:
+                                  enumToString(widget.model.weatherCondition),
+                              width: 64,
+                              height: 64,
+                            ),
+                          ),
+                          Text(
+                            widget.model.temperatureString,
+                            semanticsLabel: Weather()
+                                .getAccessibilityForTempUnit(widget.model.unit),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        width: 50,
                         height: 64,
                       ),
-                      DetailTextWidget(
-                        defaultStyle: neonTextStyle,
-                        detailFontSize: detailFontSize,
-                        colorAnimationDuration: _colorAnimationDuration,
-                        text: widget.model.temperatureString,
-                        accessibilityText: Weather()
-                            .getAccessibilityForTempUnit(widget.model.unit),
+                      Text(
+                        date,
                       ),
                     ],
                   ),
-                  DetailTextWidget(
-                      defaultStyle: neonTextStyle,
-                      detailFontSize: detailFontSize,
-                      colorAnimationDuration: _colorAnimationDuration,
-                      text: date),
-                ],
-              ),
-            )
-          ],
+                ),
+              )
+            ],
+          ),
         ));
   }
 }

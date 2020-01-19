@@ -1,6 +1,6 @@
 name: neon_rainbow_clock
 description: A neon clock that changes colors to follow the rainbow.
-version: 1.0.0+1
+version: 1.0.0
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
